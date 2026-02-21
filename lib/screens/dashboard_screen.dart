@@ -25,16 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _startTrackingSpeed();
-    _requestMediaPermission(); 
-  }
-
-  Future<void> _requestMediaPermission() async {
-    try {
-      await FlutterMediaController.requestPermissions();
-    } catch (e) {
-      // Ignore
-    }
+    _startTrackingSpeed(); 
   }
 
   Future<void> _startTrackingSpeed() async {
@@ -100,7 +91,7 @@ class PortraitView extends StatelessWidget {
     return SafeArea(
       child: Column(
         children: [
-          const Spacer(flex: 2), 
+          const Spacer(flex: 1), 
           Center(
             child: Speedometer(
               currentSpeed: speed, 
@@ -108,7 +99,18 @@ class PortraitView extends StatelessWidget {
               unit: 'km/h',
             ),
           ),
-          const Spacer(flex: 3),
+          const Spacer(flex: 1),
+          Center(
+            child: MiniMap(),
+          ),
+          const Spacer(flex: 1),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 10.0),
+            child: MediaPlayerWidget(
+              width: 250,
+              verticleButtons: true,
+            ),
+          ),
         ],
       ),
     );
