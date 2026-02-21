@@ -58,7 +58,7 @@ class _MiniMapState extends State<MiniMap> {
       _mapController.move(newLatLng, 17);
 
       if (position.heading != 0) {
-        _mapController.rotate(position.heading);
+        _mapController.rotate(360 - position.heading);
       }
     });
   }
