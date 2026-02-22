@@ -39,7 +39,16 @@ class _MediaPlayerWidgetState extends State<MediaPlayerWidget> {
             isPlaying = mediaInfo.isPlaying ?? false;
           });
         }
-      } catch (e) { /* Ignore */ }
+      } catch (e) { 
+        // STOP THE TIMER ON FAILURE!
+        timer.cancel(); 
+        if (mounted) {
+          setState(() {
+            title = 'Permission Needed';
+            artist = 'Please restart app after granting';
+          });
+        }
+      }
     });
   }
 

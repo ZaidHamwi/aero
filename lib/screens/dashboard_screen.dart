@@ -4,7 +4,9 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:geolocator_android/geolocator_android.dart';
 import 'package:flutter_media_controller/flutter_media_controller.dart';
-
+import 'package:permission_handler/permission_handler.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:notification_listener_service/notification_listener_service.dart';
 
 // Import custom widgets
 import '../widgets/speedometer.dart';
@@ -22,10 +24,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
   double _currentSpeed = 0.0;
   StreamSubscription<Position>? _positionStream;
 
+  bool _isInitialized = false; // stops UI from loading until permissions are handled
+
   @override
   void initState() {
     super.initState();
-    _startTrackingSpeed(); 
+    _initializeServices();
+  }
+
+  Future<void> _initializeServices() async {
+    await _requestLocationPermission();
+    
+    await _requestNotiPermission();
+
+    await _startTrackingSpeed(); 
+
+    if (mounted) {
+      setState(() {
+        _isInitialized = true;
+      });
+    }
+  }
+
+  Future<void> _requestLocationPermission() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+  }
+
+  Future<void> _requestNotiPermission() async {
+    var status = await Permission.notification.status;
+    if (!status.isGranted) {
+      await Permission.notification.request();
+    }
+    bool listenerStatus = await NotificationListenerService.isPermissionGranted();
+
+    if (!listenerStatus) {
+      _showPermissionDialog();
+      // await NotificationListenerService.requestPermission();
+    }
+  }
+
+  void _showPermissionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color.fromARGB(255, 30, 30, 30),
+        title: const Text("Notification Access Required", style: TextStyle(color: Colors.white)),
+        content: const Text(
+          "To display your music, Aero needs to be given the 'Notification read, reply and control' permission.\n\nPlease tap on 'Aero' and then tap 'Allow' on following settings screen.",
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () async {
+              await NotificationListenerService.requestPermission();
+            },
+            child: const Text("Go to Settings", style: TextStyle(color: Colors.cyanAccent)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _startTrackingSpeed() async {
@@ -42,7 +109,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     LocationSettings locationSettings = AndroidSettings(
       accuracy: LocationAccuracy.bestForNavigation, 
       distanceFilter: 0, 
-      intervalDuration: const Duration(milliseconds: 500), 
+      intervalDuration: const Duration(milliseconds: 200), 
     );
 
     _positionStream = Geolocator.getPositionStream(
@@ -64,6 +131,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    if (!_isInitialized) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: const Center(
+          child: CircularProgressIndicator(color: Colors.cyanAccent),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: OrientationBuilder(
