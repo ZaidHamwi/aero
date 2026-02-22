@@ -74,9 +74,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-        title: const Text("Notification Access Required", style: TextStyle(color: Colors.white)),
+        title: const Text("Notification Access Required \n\n PLEASE READ CAREFULLY", style: TextStyle(color: Colors.white)),
         content: const Text(
-          "To display your music, Aero needs to be given the 'Notification read, reply and control' permission.\n\nPlease tap on 'Aero' and then tap 'Allow' on following settings screen.",
+          "To display your music, Aero needs to be given the 'Notification read, reply and control' permission.\n\nPlease tap on 'Aero' and then tap 'Allow' on following settings screen. \n\n Aero will NEED to restart after that. \n\n You might not be allowed to grant the permission because android might first need you to manually do the following: \n\n - Open Settings\n - Go to Apps\n\n - Tap 'Aero'\n - Tap on the 3 dots in the top right corner\n - Tap 'Allow restricted access'\n - Enable the toggle for Aero\n\n Then you may comne back here to grant the permission.",
           style: TextStyle(color: Colors.white70),
         ),
         actions: [
