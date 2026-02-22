@@ -16,39 +16,46 @@ class Speedometer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 280, 
-      height: 280,
-      child: CustomPaint(
-        painter: SpeedGaugePainter(
-          currentSpeed: currentSpeed,
-          maxSpeed: maxSpeed,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                currentSpeed.toStringAsFixed(1), 
-                style: const TextStyle(
-                  fontSize: 80,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                  letterSpacing: -2,
-                ),
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: currentSpeed),
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeOutCubic,
+      builder: (context, animatedSpeed, child) {
+        return SizedBox(
+          width: 280, 
+          height: 280,
+          child: CustomPaint(
+            painter: SpeedGaugePainter(
+              currentSpeed: animatedSpeed,
+              maxSpeed: maxSpeed,
+            ),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    animatedSpeed.toStringAsFixed(1), 
+                    style: const TextStyle(
+                      fontSize: 80,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: -2,
+                    ),
+                  ),
+                  Text(
+                    unit,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white54,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                unit,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white54,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

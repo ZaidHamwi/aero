@@ -74,10 +74,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color.fromARGB(255, 30, 30, 30),
-        title: const Text("Notification Access Required \n\n PLEASE READ CAREFULLY", style: TextStyle(color: Colors.white)),
-        content: const Text(
-          "To display your music, Aero needs to be given the 'Notification read, reply and control' permission.\n\nPlease tap on 'Aero' and then tap 'Allow' on following settings screen. \n\n Aero will NEED to restart after that. \n\n You might not be allowed to grant the permission because android might first need you to manually do the following: \n\n - Open Settings\n - Go to Apps\n\n - Tap 'Aero'\n - Tap on the 3 dots in the top right corner\n - Tap 'Allow restricted access'\n - Enable the toggle for Aero\n\n Then you may comne back here to grant the permission.",
-          style: TextStyle(color: Colors.white70),
+        title: const Text("Notification Access\n\nPLEASE READ", style: TextStyle(color: Colors.white)),
+        // content: const Text(
+        //   "To control your music, Aero needs to be given the 'Notification read, reply and control' permission.\n\nYou must do the following: \n\n - Open Settings\n - Go to Apps\n - Tap 'Aero'\n - Tap on the 3 dots in the top right corner\n - Tap 'Allow restricted access'\n\nThen tap the 'NRRC Settings' button below",
+        //   style: TextStyle(color: Colors.white70),
+        // ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.cyanAccent.withOpacity(0.1)),
+                onPressed: () => openAppSettings(),
+                icon: const Icon(Icons.settings, color: Colors.cyanAccent),
+                label: const Text("OPEN APP INFO", style: TextStyle(color: Colors.cyanAccent)),
+              ),
+            ),
+            const SizedBox(height: 15),
+            const Text(
+              "To control your music, Aero needs the\n'Notification read, reply and control'\npermission.\n\nYou must do the following: \n\n - Go to Apps (via button above)\n - Tap on the 3 dots in the top right corner\n - Tap 'Allow restricted access'\n\nThen tap the 'NRRC Settings' button below\n\nNote: Aero will have to restart once given permission)",
+              style: TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+          ],
         ),
         actions: [
           TextButton(
@@ -88,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onPressed: () async {
               await NotificationListenerService.requestPermission();
             },
-            child: const Text("Go to Settings", style: TextStyle(color: Colors.cyanAccent)),
+            child: const Text("NRRC Settings", style: TextStyle(color: Colors.cyanAccent)),
           ),
         ],
       ),
